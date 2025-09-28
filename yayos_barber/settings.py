@@ -9,7 +9,11 @@ import os
 
 # 🔒 ALLOWED_HOSTS dinámico con variable de entorno
 # Si no existe ALLOWED_HOSTS en el entorno, se usa "localhost" por defecto
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1,yayo-s-barber.onrender.com"
+).split(",")
+
 
 
 # Aplicaciones instaladas

@@ -76,8 +76,19 @@ CHANNEL_LAYERS = {
 }
 
 # 🔥 BASE DE DATOS - Configuración dinámica para desarrollo y producción
-if DEBUG:
-    # Configuración local (desarrollo)
+DATABASE_URL = config('DATABASE_URL', default='')
+
+if DATABASE_URL:
+    # Si existe DATABASE_URL, usar PostgreSQL (producción)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    # Configuración local MySQL (desarrollo)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -88,15 +99,6 @@ if DEBUG:
             'PORT': '3306',
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         }
-    }
-else:
-    # Configuración para producción (Render con PostgreSQL)
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=config('DATABASE_URL', default=''),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
     }
 
 # Validación de contraseñas

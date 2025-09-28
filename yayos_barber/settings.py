@@ -1,20 +1,25 @@
 from pathlib import Path
 import os
+import dj_database_url
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-ega7^rmtj4rm0u#i5eh4e%qeh9pd4kgjp^tvem2yrke(pi%nm&'
-DEBUG = True
-import os
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-ega7^rmtj4rm0u#i5eh4e%qeh9pd4kgjp^tvem2yrke(pi%nm&')
+
+# 🔒 DEBUG dinámico - False en producción
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 # 🔒 ALLOWED_HOSTS dinámico con variable de entorno
-# Si no existe ALLOWED_HOSTS en el entorno, se usa "localhost" por defecto
-ALLOWED_HOSTS = os.getenv(
+ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    "localhost,127.0.0.1,yayo-s-barber.onrender.com"
+    default="localhost,127.0.0.1"
 ).split(",")
 
-
+# En producción, añadir el dominio de Render
+if not DEBUG:
+    ALLOWED_HOSTS.append('yayo-s-barber.onrender.com')
+    ALLOWED_HOSTS.append('.onrender.com')
 
 # Aplicaciones instaladas
 INSTALLED_APPS = [
@@ -28,10 +33,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles', 
 ]
 
-
-# Middleware
+# Middleware - WhiteNoise añadido para archivos estáticos
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # 🔥 IMPORTANTE para archivos estáticos
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -62,33 +67,37 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'yayos_barber.wsgi.application'
-
 ASGI_APPLICATION = 'yayos_barber.asgi.application'
-
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",  # Para desarrollo
-        # Para producción usar Redis
-        # "BACKEND": "channels_redis.core.RedisChannelLayer",
-        # "CONFIG": {
-        #     "hosts": [("127.0.0.1", 6379)],
-        # },
     },
 }
 
-# Base de datos (MySQL en este caso)
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'yayos_barber',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'init_command': "SET sql_mode='STRICT-TRANS_TABLES'"
+# 🔥 BASE DE DATOS - Configuración dinámica para desarrollo y producción
+if DEBUG:
+    # Configuración local (desarrollo)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'yayos_barber',
+            'USER': 'root',
+            'PASSWORD': '',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
     }
-}
+else:
+    # Configuración para producción (Render con PostgreSQL)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=config('DATABASE_URL', default=''),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
 
 # Validación de contraseñas
 AUTH_PASSWORD_VALIDATORS = [
@@ -112,13 +121,15 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Archivos estáticos
-STATIC_URL = 'static/'
+# 🔥 ARCHIVOS ESTÁTICOS - Configuración mejorada
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    'yayos_barber/Public'
+    os.path.join(BASE_DIR, 'yayos_barber', 'Public'),
 ]
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# WhiteNoise configuración para comprimir archivos estáticos
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Archivos multimedia
 MEDIA_URL = '/media/'
@@ -129,18 +140,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Login clásico
 LOGIN_URL = '/login/'
 
+# 🔥 CONFIGURACIÓN DE EMAIL
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_HOST = config("EMAIL_HOST", default="")
+    EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
+    EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+    EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+    DEFAULT_FROM_EMAIL = config("EMAIL_HOST_USER", default="")
 
-# Configuración para restablecer contraseña
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'# Para pruebas locales
-
-from decouple import config
-
-EMAIL_HOST = config("EMAIL_HOST")
-EMAIL_PORT = config("EMAIL_PORT", cast=int)
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = config("EMAIL_HOST_USER")
-
-
-
+# 🔒 Configuraciones de seguridad para producción
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'

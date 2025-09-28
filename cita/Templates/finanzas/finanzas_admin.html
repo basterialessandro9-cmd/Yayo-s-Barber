@@ -1,0 +1,135 @@
+{% load static %}
+{% include "inc/header.html" %}
+
+<link rel="stylesheet" href="{% static 'Css/custom.css' %}">
+
+<div class="main-wrapper">
+
+    {% include "inc/topbar.html" %}
+    {% include "inc/sidebar.html" %}
+
+    <div class="page-wrapper">
+        <div class="container-fluid">
+
+            <!-- ============================================================== -->
+            <!-- Título y breadcrumb -->
+            <!-- ============================================================== -->
+            <div class="row page-titles d-flex align-items-center">
+                <div class="col-md-6 align-self-center">
+                    <h3 class="text-themecolor m-0">Finanzas (Administrador)</h3>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'panel_control' %}">Administrador</a></li>
+                        <li class="breadcrumb-item active">Finanzas</li>
+                    </ol>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="{% url 'editar_comision_global' %}" class="btn btn-warning">
+                        Editar Comisión Global ({{ comision }}%)
+                    </a>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- Filtros -->
+            <!-- ============================================================== -->
+            <div class="services-card mb-3 p-3 bg-dark text-light rounded">
+                <form method="get" class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label text-light">Barbero</label>
+                        <select name="barbero" class="form-control">
+                            <option value="todos">Todos</option>
+                            {% for barbero in barberos %}
+                                <option value="{{ barbero.id }}" {% if barbero_selected == barbero.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ barbero.user.first_name }} {{ barbero.user.last_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label text-light">Fecha</label>
+                        <input type="date" name="fecha" value="{{ fecha_selected }}" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-warning w-100">Filtrar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- Totales -->
+            <!-- ============================================================== -->
+            <div class="card mt-4">
+                <div class="card-header bg-dark text-light"><h5 class="mb-0">Totales</h5></div>
+                <div class="card-body row text-center">
+                    <div class="col-md-4">
+                        <h6 class="fw-bold">Total Ingresos</h6>
+                        <p class="fs-4 text-primary">${{ total_ingresos|floatformat:2 }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="fw-bold">Ganancia Barberos ({{ comision }}%)</h6>
+                        <p class="fs-4 text-success">${{ total_barberos|floatformat:2 }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="fw-bold">Ganancia Admin</h6>
+                        <p class="fs-4 text-warning">${{ total_admin|floatformat:2 }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- Tabla Detalle -->
+            <!-- ============================================================== -->
+            <div class="card mt-4">
+                <div class="card-header bg-dark text-light"><h5 class="mb-0">Detalle de Citas</h5></div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Cliente</th>
+                                    <th>Barbero</th>
+                                    <th>Servicios</th>
+                                    <th>Fecha</th>
+                                    <th>Total</th>
+                                    <th>Ganancia Barbero</th>
+                                    <th>Ganancia Admin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if citas %}
+                                    {% for cita in citas %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ cita.cliente.user.get_full_name }}</td>
+                                            <td>{{ cita.barbero.user.get_full_name }}</td>
+                                            <td>
+                                                {% for servicio in cita.servicios.all %}
+                                                    <span class="badge bg-secondary">{{ servicio.nombre }}</span>
+                                                {% endfor %}
+                                            </td>
+                                            <td>{{ cita.inicio|date:"d/m/Y H:i" }}</td>
+                                            <td>${{ cita.precio_total|floatformat:2 }}</td>
+                                            <td>${{ cita.finanza.ingreso_barbero|floatformat:2 }}</td>
+                                            <td>${{ cita.finanza.ingreso_admin|floatformat:2 }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted py-3">No se encontraron resultados.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% include "inc/footer.html" %}
+

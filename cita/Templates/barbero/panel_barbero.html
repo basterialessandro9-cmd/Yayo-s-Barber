@@ -1,0 +1,161 @@
+{%load static%}
+    {% include "inc/headerb.html" %}
+
+
+
+
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+  <div class="main-wrapper">
+  
+
+	  {% include "inc/topbarb.html" %}
+
+
+
+       
+          {% include "inc/sidebarb.html" %}
+	 
+	<style>
+  /* 📱 Responsive para el dashboard */
+
+  /* Pantallas medianas (tablets) */
+  @media (max-width: 992px) {
+    .card {
+      padding: 2rem 1.5rem !important;
+    }
+
+    .card h2 {
+      font-size: 1.8rem !important;
+    }
+
+    .card p {
+      font-size: 1.1rem !important;
+    }
+
+    .page-titles h3 {
+      font-size: 1.4rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.9rem;
+    }
+  }
+
+  /* Pantallas pequeñas (celulares en vertical) */
+  @media (max-width: 768px) {
+    .card {
+      margin: 1rem auto;
+      padding: 1.5rem !important;
+      border-radius: 1rem;
+    }
+
+    .card h2 {
+      font-size: 1.5rem !important;
+    }
+
+    .card p {
+      font-size: 1rem !important;
+    }
+
+    .page-titles {
+      text-align: center;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .page-titles h3 {
+      font-size: 1.2rem;
+    }
+
+    .breadcrumb {
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+  }
+
+  /* Pantallas muy pequeñas (menores a 480px) */
+  @media (max-width: 480px) {
+    .card {
+      padding: 1rem !important;
+    }
+
+    .card h2 {
+      font-size: 1.2rem !important;
+    }
+
+    .card p {
+      font-size: 0.9rem !important;
+    }
+
+    .page-titles h3 {
+      font-size: 1rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.75rem;
+    }
+  }
+</style>
+
+	 
+	 
+	 <div class="page-wrapper">
+        <!-- ============================================================== -->
+        <!-- Container fluid  -->
+        <!-- ============================================================== -->
+        <div class="container-fluid">
+          <!-- ============================================================== -->
+          <!-- Bread crumb and right sidebar toggle -->
+          <!-- ============================================================== -->
+          <div class="row page-titles d-flex align-items-center">
+            <div class="col-md-5 align-self-center">
+              <h3 class="text-themecolor m-0">Dashboard</h3>
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a href="">Barbero</a>
+                </li>
+                <li class="breadcrumb-item active">Dashboard</li>
+              </ol>
+            </div>
+            
+          </div>
+          <!-- ============================================================== -->
+          <!-- End Bread crumb and right sidebar toggle -->
+          <!-- ============================================================== -->
+  
+
+          <!-- ============================================================== -->
+          <!-- Projects of the Month -->
+          <!-- ============================================================== -->
+
+
+          <!-- ============================================================== -->
+          <!-- End Projects of the Month -->
+          <!-- ============================================================== -->
+        <div class="card shadow-lg border-0 rounded-3 mt-4 p-5 text-center w-100"
+     style="background: linear-gradient(135deg, #FFD700, #FFB300); 
+            color: #fff; 
+            min-height: 200px;">
+  <h2 class="mb-3" style="font-weight: 700; font-size: 2.2rem;">
+    Bienvenido, {{ barbero.user.first_name }}
+  </h2>
+  <p style="font-size: 1.3rem; margin: 0; color: #fff;">
+    Nos alegra verte de nuevo en tu panel de control ✨
+  </p>
+</div>
+
+
+
+
+<script>
+    const userId = "{{ request.user.id }}";  // 🔑 identificador único del usuario logueado
+
+</script>
+     
+  
+  
+	 {% include "inc/footerb.html" %}
+
+
+

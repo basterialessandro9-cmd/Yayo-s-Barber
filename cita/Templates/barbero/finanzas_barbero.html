@@ -1,0 +1,102 @@
+{% load static %}
+{% include "inc/headerb.html" %}
+
+<link rel="stylesheet" href="{% static 'Css/custom.css' %}">
+
+<div class="main-wrapper">
+
+    {% include "inc/topbarb.html" %}
+    {% include "inc/sidebarb.html" %}
+
+    <div class="page-wrapper">
+        <div class="container-fluid">
+
+            <!-- ============================================================== -->
+            <!-- Título -->
+            <!-- ============================================================== -->
+            <div class="row page-titles d-flex align-items-center">
+                <div class="col-md-6 align-self-center">
+                    <h3 class="text-themecolor m-0">Mis Finanzas</h3>
+                </div>
+                <div class="col-md-6 text-end">
+                    <span class="badge bg-warning text-dark p-2">
+                        Comisión Global Actual: {{ comision }}%
+                    </span>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- Resumen -->
+            <!-- ============================================================== -->
+            <div class="card mt-4">
+                <div class="card-header bg-dark text-light"><h5 class="mb-0">Resumen</h5></div>
+                <div class="card-body row text-center">
+                    <div class="col-md-4">
+                        <h6 class="fw-bold">Total generado</h6>
+                        <p class="fs-4 text-primary">${{ total_ingresos }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="fw-bold">Mi Ganancia ({{ comision }}%)</h6>
+                        <p class="fs-4 text-success">${{ total_barbero }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="fw-bold">Admin</h6>
+                        <p class="fs-4 text-warning">${{ total_admin }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- Tabla de citas -->
+            <!-- ============================================================== -->
+            <div class="card mt-4">
+                <div class="card-header bg-dark text-light"><h5 class="mb-0">Mis Citas</h5></div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Cliente</th>
+                                    <th>Servicios</th>
+                                    <th>Fecha</th>
+                                    <th>Total</th>
+                                    <th>Mi Ganancia</th>
+                                    <th>Admin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if citas %}
+                                    {% for cita in citas %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ cita.cliente.user.get_full_name }}</td>
+                                            <td>
+                                                {% for servicio in cita.servicios.all %}
+                                                    <span class="badge bg-secondary">{{ servicio.nombre }}</span>
+                                                {% endfor %}
+                                            </td>
+                                          <td>{{ cita.inicio|date:"d/m/Y H:i" }}</td>
+                                          <td>${{ cita.precio_total|floatformat:2 }}</td>
+                                          <td>${{ cita.ingreso_barbero|floatformat:2 }}</td>
+                                          <td>${{ cita.ingreso_admin|floatformat:2 }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-3">No tienes citas aún.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% include "inc/footerb.html" %}
+
+

@@ -99,21 +99,21 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% if citas %}
-                                    {% for cita in citas %}
+                                {% if citas_data %}
+                                    {% for item in citas_data %}
                                         <tr>
                                             <td>{{ forloop.counter }}</td>
-                                            <td>{{ cita.cliente.user.get_full_name }}</td>
-                                            <td>{{ cita.barbero.user.get_full_name }}</td>
+                                            <td>{{ item.cita.cliente.user.get_full_name }}</td>
+                                            <td>{{ item.cita.barbero.user.get_full_name }}</td>
                                             <td>
-                                                {% for servicio in cita.servicios.all %}
+                                                {% for servicio in item.cita.servicios.all %}
                                                     <span class="badge bg-secondary">{{ servicio.nombre }}</span>
                                                 {% endfor %}
                                             </td>
-                                            <td>{{ cita.inicio|date:"d/m/Y H:i" }}</td>
-                                            <td>${{ cita.precio_total|floatformat:2 }}</td>
-                                            <td>${{ cita.finanza.ingreso_barbero|floatformat:2 }}</td>
-                                            <td>${{ cita.finanza.ingreso_admin|floatformat:2 }}</td>
+                                            <td>{{ item.cita.inicio|date:"d/m/Y H:i" }}</td>
+                                            <td>${{ item.cita.precio_total|floatformat:2 }}</td>
+                                            <td>${{ item.ingreso_barbero|floatformat:2 }}</td>
+                                            <td>${{ item.ingreso_admin|floatformat:2 }}</td>
                                         </tr>
                                     {% endfor %}
                                 {% else %}

@@ -1170,26 +1170,45 @@ def finanzas_admin(request):
 
     if fecha:
         try:
-            fecha_dt = datetime.strptime(fecha, "%d/%m/%Y").date()
+            fecha_dt = datetime.strptime(fecha, "%Y-%m-%d").date()
             citas = citas.filter(fecha_hora__date=fecha_dt)
         except ValueError:
-            pass  # si la fecha no es válida, no aplicar filtro
+            pass
 
-    total_ingresos = sum(c.precio_total for c in citas)
+    # ⚡ Obtener comisión global desde Configuración
+    config = Configuracion.objects.first()
+    comision_global = Decimal(config.comision_global) if config else Decimal(0)
 
-    # comisiones
-    total_barberos = sum(c.precio_total * c.barbero.comision / 100 for c in citas if c.barbero)
-    total_admin = total_ingresos - total_barberos
+    total_ingresos = Decimal(0)
+    total_barberos = Decimal(0)
+    total_admin = Decimal(0)
+
+    # 👇 construimos lista con finanzas por cita
+    citas_data = []
+    for c in citas:
+        ingreso_barbero = (c.precio_total * comision_global) / Decimal(100)
+        ingreso_admin = c.precio_total - ingreso_barbero
+
+        total_ingresos += c.precio_total
+        total_barberos += ingreso_barbero
+        total_admin += ingreso_admin
+
+        citas_data.append({
+            "cita": c,
+            "ingreso_barbero": ingreso_barbero,
+            "ingreso_admin": ingreso_admin,
+        })
 
     context = {
-        "citas": citas,
+        "citas_data": citas_data,
         "barberos": Barbero.objects.all(),
         "total_ingresos": total_ingresos,
         "total_barberos": total_barberos,
         "total_admin": total_admin,
+        "comision": comision_global,  # 👈 aquí ya muestra la global
     }
     return render(request, "finanzas/finanzas_admin.html", context)
-    
+
 def is_admin(user):
     return user.is_superuser
 

@@ -3,56 +3,206 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agendar Cita</title>
   
-
   <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
   <link rel="stylesheet" href="{% static 'Css/cruds.css' %}">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
-    body { background: #111; color: #fff; font-family: Arial; }
+    body { 
+      background: #111; 
+      color: #fff; 
+      font-family: Arial; 
+      margin: 0;
+      padding: 10px;
+      min-height: 100vh;
+    }
+    
     .form-card {
-      background: #1c1c1c; padding: 25px; border-radius: 12px;
-      width: 550px; margin: 40px auto;
+      background: #1c1c1c; 
+      padding: 25px; 
+      border-radius: 12px;
+      width: 100%;
+      max-width: 550px; 
+      margin: 20px auto;
       box-shadow: 0 0 20px rgba(255,215,0,0.4);
       transition: transform 0.2s;
+      box-sizing: border-box;
     }
+    
     .form-card:hover { transform: scale(1.02); }
-    h2 { text-align: center; color: #FFD700; margin-bottom: 20px; }
+    
+    h2 { 
+      text-align: center; 
+      color: #FFD700; 
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
 
-    label { display: block; margin-top: 12px; color: #FFD700; }
+    label { 
+      display: block; 
+      margin-top: 12px; 
+      color: #FFD700;
+      font-size: 1rem;
+    }
 
     select {
-      width: 100%; padding: 10px; margin-top: 5px;
-      background: #333; border: none; border-radius: 6px; color: #fff;
+      width: 100%; 
+      padding: 12px; 
+      margin-top: 5px;
+      background: #333; 
+      border: none; 
+      border-radius: 6px; 
+      color: #fff;
+      font-size: 1rem;
+      box-sizing: border-box;
     }
 
-    /* Servicios en formato card */
-    .services-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-    .service-card {
-      background: #222; padding: 12px; border-radius: 8px;
-      cursor: pointer; border: 2px solid transparent;
-      transition: all 0.2s;
+    /* Servicios en formato card responsive */
+    .services-container { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+      gap: 10px; 
+      margin-top: 10px; 
     }
+    
+    .service-card {
+      background: #222; 
+      padding: 12px; 
+      border-radius: 8px;
+      cursor: pointer; 
+      border: 2px solid transparent;
+      transition: all 0.2s;
+      text-align: center;
+      min-height: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
     .service-card:hover { border-color: #FFD700; }
     .service-card.active { border-color: #FFD700; background: #333; }
 
     .btn {
-      display: block; margin-top: 25px; width: 100%;
-      background: #FFD700; color: #000;
-      padding: 12px; border: none; border-radius: 8px;
-      font-weight: bold; cursor: pointer; font-size: 16px;
+      display: block; 
+      margin-top: 25px; 
+      width: 100%;
+      background: #FFD700; 
+      color: #000;
+      padding: 14px; 
+      border: none; 
+      border-radius: 8px;
+      font-weight: bold; 
+      cursor: pointer; 
+      font-size: 1.1rem;
       transition: background 0.3s, transform 0.2s;
+      box-sizing: border-box;
     }
-    .btn:hover { background: #e6c200; transform: scale(1.03); }
+    
+    .btn:hover { 
+      background: #e6c200; 
+      transform: scale(1.03); 
+    }
 
     /* Resumen dinámico */
     #resumen {
-      margin-top: 20px; background: #222; padding: 15px; border-radius: 10px;
-      display:none; opacity: 0; transform: translateY(10px);
+      margin-top: 20px; 
+      background: #222; 
+      padding: 15px; 
+      border-radius: 10px;
+      display: none; 
+      opacity: 0; 
+      transform: translateY(10px);
       transition: all 0.3s ease-in-out;
     }
-    #resumen.visible { display:block; opacity: 1; transform: translateY(0); }
+    
+    #resumen.visible { 
+      display: block; 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+
+    /* Media queries para responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 5px;
+      }
+      
+      .form-card {
+        padding: 20px;
+        margin: 10px auto;
+        border-radius: 8px;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+      }
+      
+      .services-container {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      
+      .service-card {
+        padding: 10px;
+        min-height: 50px;
+      }
+      
+      select {
+        padding: 10px;
+        font-size: 16px; /* Evita zoom en iOS */
+      }
+      
+      .btn {
+        padding: 12px;
+        font-size: 1rem;
+      }
+      
+      #resumen {
+        padding: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-card {
+        padding: 15px;
+        margin: 5px auto;
+      }
+      
+      h2 {
+        font-size: 1.3rem;
+      }
+      
+      label {
+        font-size: 0.9rem;
+      }
+      
+      .service-card {
+        padding: 8px;
+        font-size: 0.9rem;
+      }
+      
+      .btn {
+        font-size: 0.95rem;
+      }
+    }
+
+    /* Para pantallas muy pequeñas (landscape móviles) */
+    @media (max-height: 600px) and (orientation: landscape) {
+      .form-card {
+        margin: 10px auto;
+      }
+      
+      h2 {
+        margin-bottom: 10px;
+      }
+      
+      label {
+        margin-top: 8px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -161,14 +311,14 @@
       const checkbox = card.querySelector("input[type=checkbox]");
       card.addEventListener("click", () => {
         card.classList.toggle("active");
-        checkbox.checked = card.classList.contains("active"); // sincronizar checkbox real
+        checkbox.checked = card.classList.contains("active");
         actualizarResumen();
       });
     });
 
     document.getElementById("barbero").addEventListener("change", cargarHorarios);
 
-    // 🔔 SweetAlert al agendar
+    // SweetAlert al agendar
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('agendada') === '1') {
       Swal.fire({
@@ -177,7 +327,7 @@
         text: 'Tu cita ha sido agendada con éxito.',
         confirmButtonColor: '#FFD700'
       });
-      history.replaceState(null, '', window.location.pathname); // limpia la URL
+      history.replaceState(null, '', window.location.pathname);
     }
   </script>
 </body>

@@ -54,12 +54,15 @@ AUTO_LOGOUT_DELAY = 1
 ROOT_URLCONF = 'yayos_barber.urls'
 
 # 🔥 Configuración de plantillas
+# 🔥 Configuración de plantillas
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # Carpeta global de templates (opcional, para cosas como base.html)
-        'DIRS': [BASE_DIR / "templates"],
-        'APP_DIRS': True,  # Django busca en cada app (ej: cita/templates/)
+        'DIRS': [
+            BASE_DIR / "templates",  # Carpeta global
+            BASE_DIR / "cita" / "Templates",  # Tus templates actuales
+        ],
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',

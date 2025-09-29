@@ -53,7 +53,10 @@ ROOT_URLCONF = 'yayos_barber.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['yayos_barber/Templates'],
+        'DIRS': [
+            'yayos_barber/Templates',
+            'cita/Templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

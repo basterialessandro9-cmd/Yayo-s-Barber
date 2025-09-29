@@ -5,10 +5,7 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config(
-    'SECRET_KEY',
-    default='django-insecure-ega7^rmtj4rm0u#i5eh4e%qeh9pd4kgjp^tvem2yrke(pi%nm&'
-)
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-ega7^rmtj4rm0u#i5eh4e%qeh9pd4kgjp^tvem2yrke(pi%nm&')
 
 # 🔒 DEBUG dinámico - False en producción
 DEBUG = config('DEBUG', default=False, cast=bool)
@@ -33,7 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles', 
 ]
 
 # Middleware - WhiteNoise añadido para archivos estáticos
@@ -53,15 +50,10 @@ AUTO_LOGOUT_DELAY = 1
 # Rutas principales
 ROOT_URLCONF = 'yayos_barber.urls'
 
-# 🔥 Configuración de plantillas
-# 🔥 Configuración de plantillas
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR / "templates",  # Carpeta global
-            BASE_DIR / "cita" / "Templates",  # Tus templates actuales
-        ],
+        'DIRS': ['yayos_barber/Templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
